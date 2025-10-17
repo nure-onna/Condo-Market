@@ -5,21 +5,27 @@ import 'package:ihc_marketplace/home_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'l10n/app_localizations.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:ihc_marketplace/screens/auth/login_screen.dart';
 import 'package:ihc_marketplace/screens/auth/login_screen.dart';
 import 'package:ihc_marketplace/models/product.dart'; // Mantém o modelo para a HomePage
 // import 'package:ihc_marketplace/home_page.dart'; // Mantém a HomePage
 
-const SUPABASE_URL = 'https://sua-url-do-supabase.supabase.co';
-const SUPABASE_ANON_KEY = 'sua-chave-publica-anon-do-supabase';
-
 void main() async {
   // Garante que o Flutter está pronto para a inicialização.
   WidgetsFlutterBinding.ensureInitialized();
 
+  try {
+    await dotenv.load(fileName: ".env"); // Load environment variables
+    await Supabase.initialize(
+      url: dotenv.env['SUPABASE_URL']!,
+      anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+    );
+  } catch (e) {
+    throw Exception('Error loading .env file: $e'); // Print error if any
+  }
   // Inicializa o Supabase.
-  await Supabase.initialize(url: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY);
 
   runApp(const MyApp());
 }
